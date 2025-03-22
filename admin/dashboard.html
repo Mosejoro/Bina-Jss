@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BINA Secondary - Admin Dashboard</title>
+    <link rel="stylesheet" href="../auth.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <img src="../logo.png" alt="BINA Secondary" />
+        <h3>Admin Panel</h3>
+      </div>
+      <ul class="sidebar-menu">
+        <li class="active">
+          <a href="dashboard.html"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="users.html"><i class="fas fa-users"></i> User Management</a>
+        </li>
+        <li>
+          <a href="access-codes.html"
+            ><i class="fas fa-key"></i> Access Codes</a
+          >
+        </li>
+        <li>
+          <a href="results.html"
+            ><i class="fas fa-chart-bar"></i> Exam Results</a
+          >
+        </li>
+        <li>
+          <a href="questions.html"
+            ><i class="fas fa-question-circle"></i> Question Bank</a
+          >
+        </li>
+        <li>
+          <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        </li>
+        <li class="logout">
+          <a href="#" id="logoutBtn"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="user-info">
+          <span id="adminName">Admin</span>
+          <i class="fas fa-user-shield"></i>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1>Dashboard</h1>
+        <p class="welcome-message">Welcome to the BINA Secondary Admin Panel</p>
+
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Total Students</h3>
+              <p id="totalStudents">Loading...</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Exams Taken</h3>
+              <p id="totalExams">Loading...</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Average Score</h3>
+              <p id="averageScore">Loading...</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-key"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Access Codes</h3>
+              <p id="totalCodes">Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-sections">
+          <div class="section">
+            <h2>Recent Exam Results</h2>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Subject</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="recentResults">
+                  <tr>
+                    <td colspan="4" class="loading-data">
+                      Loading recent results...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <a href="results.html" class="view-all">View All Results</a>
+          </div>
+
+          <div class="section">
+            <h2>Quick Actions</h2>
+            <div class="quick-actions">
+              <a href="users.html" class="action-card">
+                <i class="fas fa-user-plus"></i>
+                <span>Manage Users</span>
+              </a>
+              <a href="access-codes.html" class="action-card">
+                <i class="fas fa-key"></i>
+                <span>Generate Access Codes</span>
+              </a>
+              <a href="results.html" class="action-card">
+                <i class="fas fa-file-export"></i>
+                <span>Export Results</span>
+              </a>
+              <a href="settings.html" class="action-card">
+                <i class="fas fa-cogs"></i>
+                <span>System Settings</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
+    <script>
+      // Your Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCS1WkhpFPuUy46PEkKLtoqeVQ4lUZyRkU",
+        authDomain: "bina-secondary.firebaseapp.com",
+        projectId: "bina-secondary",
+        storageBucket: "bina-secondary.firebasestorage.app",
+        messagingSenderId: "373949569768",
+        appId: "1:373949569768:web:9c17c253364b87209c075d",
+        measurementId: "G-0G3XEY2GXN",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Get references to Firebase services
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      // Check if user is logged in and is an admin
+      document.addEventListener("DOMContentLoaded", function () {
+        // First check if we have admin data in localStorage
+        const storedUserRole = localStorage.getItem("userRole");
+        const storedUserName = localStorage.getItem("userName");
+
+        if (storedUserRole === "admin" && storedUserName) {
+          // We have admin data in localStorage, display the admin name
+          document.getElementById("adminName").textContent =
+            localStorage.getItem("userFullName") || storedUserName || "Admin";
+
+          // Load dashboard data
+          loadDashboardData();
+        }
+
+        // Also verify with Firebase Auth (more secure)
+        auth.onAuthStateChanged(function (user) {
+          if (user) {
+            // User is signed in, check if admin
+            db.collection("users")
+              .doc(user.uid)
+              .get()
+              .then((doc) => {
+                if (doc.exists && doc.data().role === "admin") {
+                  // User is an admin
+                  // Update localStorage with latest data
+                  localStorage.setItem(
+                    "userName",
+                    doc.data().username || "admin"
+                  );
+                  localStorage.setItem(
+                    "userFullName",
+                    doc.data().fullName || doc.data().username || "Admin"
+                  );
+                  localStorage.setItem("userRole", "admin");
+
+                  document.getElementById("adminName").textContent =
+                    doc.data().fullName || doc.data().username || "Admin";
+
+                  // Load dashboard data if not already loaded
+                  loadDashboardData();
+                } else {
+                  // Not an admin, redirect to login
+                  console.log("Not an admin, redirecting to login");
+                  localStorage.removeItem("userRole");
+                  localStorage.removeItem("userName");
+                  localStorage.removeItem("userFullName");
+                  window.location.href = "../admin-login.html";
+                }
+              })
+              .catch((error) => {
+                console.error("Error checking admin status:", error);
+                window.location.href = "../admin-login.html";
+              });
+          } else {
+            // No user is signed in, check if we have admin data in localStorage
+            if (storedUserRole !== "admin") {
+              // No admin data, redirect to login
+              console.log("No user signed in, redirecting to login");
+              window.location.href = "../admin-login.html";
+            }
+          }
+        });
+      });
+
+      // Logout functionality
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          auth
+            .signOut()
+            .then(() => {
+              // Clear local storage
+              localStorage.removeItem("userName");
+              localStorage.removeItem("userRole");
+              localStorage.removeItem("userFullName");
+              // Redirect to login page
+              window.location.href = "../admin-login.html";
+            })
+            .catch((error) => {
+              console.error("Error signing out:", error);
+            });
+        });
+
+      // Toggle sidebar on mobile
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", function () {
+          document.querySelector(".sidebar").classList.toggle("active");
+        });
+
+      // Load dashboard data
+      function loadDashboardData() {
+        // Get total students
+        db.collection("users")
+          .where("role", "==", "student")
+          .get()
+          .then((querySnapshot) => {
+            document.getElementById("totalStudents").textContent =
+              querySnapshot.size;
+          })
+          .catch((error) => {
+            console.error("Error getting students:", error);
+            document.getElementById("totalStudents").textContent = "Error";
+          });
+
+        // Get total exams and average score
+        db.collection("exam_results")
+          .get()
+          .then((querySnapshot) => {
+            const totalExams = querySnapshot.size;
+            document.getElementById("totalExams").textContent = totalExams;
+
+            // Calculate average score
+            if (totalExams > 0) {
+              let totalScore = 0;
+              querySnapshot.forEach((doc) => {
+                totalScore += doc.data().percentage || 0;
+              });
+              const averageScore = (totalScore / totalExams).toFixed(1);
+              document.getElementById("averageScore").textContent =
+                averageScore + "%";
+            } else {
+              document.getElementById("averageScore").textContent = "N/A";
+            }
+
+            // Load recent results
+            loadRecentResults(querySnapshot);
+          })
+          .catch((error) => {
+            console.error("Error getting exams:", error);
+            document.getElementById("totalExams").textContent = "Error";
+            document.getElementById("averageScore").textContent = "Error";
+          });
+
+        // Get total access codes
+        db.collection("access_codes")
+          .get()
+          .then((querySnapshot) => {
+            const totalCodes = querySnapshot.size;
+            const availableCodes = querySnapshot.docs.filter(
+              (doc) => !doc.data().used
+            ).length;
+            document.getElementById(
+              "totalCodes"
+            ).textContent = `${availableCodes} / ${totalCodes}`;
+          })
+          .catch((error) => {
+            console.error("Error getting access codes:", error);
+            document.getElementById("totalCodes").textContent = "Error";
+          });
+      }
+
+      // Load recent exam results
+      function loadRecentResults(querySnapshot) {
+        const recentResultsElement = document.getElementById("recentResults");
+
+        if (querySnapshot.empty) {
+          recentResultsElement.innerHTML = `
+          <tr>
+            <td colspan="4" class="no-data">No exam results found</td>
+          </tr>
+        `;
+          return;
+        }
+
+        // Sort by timestamp and get the 5 most recent
+        const results = [];
+        querySnapshot.forEach((doc) => {
+          results.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+
+        results.sort((a, b) => {
+          return (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0);
+        });
+
+        const recentResults = results.slice(0, 5);
+
+        // Clear loading message
+        recentResultsElement.innerHTML = "";
+
+        // Add recent results to table
+        recentResults.forEach((result) => {
+          const date = result.timestamp?.toDate() || new Date();
+          const formattedDate = date.toLocaleDateString();
+
+          recentResultsElement.innerHTML += `
+          <tr>
+            <td>${result.name || "Unknown"}</td>
+            <td>${result.subject || "Unknown"}</td>
+            <td>${result.percentage || 0}%</td>
+            <td>${formattedDate}</td>
+          </tr>
+        `;
+        });
+      }
+    </script>
+  </body>
+</html>

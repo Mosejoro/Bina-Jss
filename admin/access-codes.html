@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BINA Secondary - Access Code Management</title>
+    <!-- <link rel="stylesheet" href="../auth-styles.css" /> -->
+    <link rel="stylesheet" href="../auth.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <img src="../logo.png" alt="BINA Secondary" />
+        <h3>Admin Panel</h3>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="dashboard.html"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="users.html"><i class="fas fa-users"></i> User Management</a>
+        </li>
+        <li class="active">
+          <a href="access-codes.html"
+            ><i class="fas fa-key"></i> Access Codes</a
+          >
+        </li>
+        <li>
+          <a href="results.html"
+            ><i class="fas fa-chart-bar"></i> Exam Results</a
+          >
+        </li>
+        <li>
+          <a href="questions.html"
+            ><i class="fas fa-question-circle"></i> Question Bank</a
+          >
+        </li>
+        <li>
+          <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+        </li>
+        <li class="logout">
+          <a href="#" id="logoutBtn"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="user-info">
+          <span id="adminName">Admin</span>
+          <i class="fas fa-user-shield"></i>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1>Access Code Management</h1>
+        <p class="subtitle">
+          Generate and manage access codes for student registration
+        </p>
+
+        <div class="action-bar">
+          <button class="btn btn-primary" id="generateCodeBtn">
+            <i class="fas fa-plus"></i> Generate New Access Code
+          </button>
+          <div class="search-box">
+            <input type="text" id="searchCodes" placeholder="Search codes..." />
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Access Code</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Used By</th>
+                <th>Used On</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="codesList">
+              <tr>
+                <td colspan="6" class="loading-data">
+                  Loading access codes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate Code Modal -->
+    <div class="modal" id="generateCodeModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Generate New Access Code</h2>
+          <button class="close-btn" id="closeGenerateCodeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Generate a new access code for student registration.</p>
+          <div class="form-group">
+            <label for="codeLength">Code Length:</label>
+            <select id="codeLength">
+              <option value="6">6 characters</option>
+              <option value="8" selected>8 characters</option>
+              <option value="10">10 characters</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="codeType">Code Type:</label>
+            <select id="codeType">
+              <option value="alphanumeric" selected>Alphanumeric</option>
+              <option value="numeric">Numeric only</option>
+              <option value="alphabetic">Alphabetic only</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="cancelGenerateCode"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="confirmGenerateCode"
+            >
+              <i class="fas fa-key"></i> Generate Code
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
+    <script>
+      // Your Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCS1WkhpFPuUy46PEkKLtoqeVQ4lUZyRkU",
+        authDomain: "bina-secondary.firebaseapp.com",
+        projectId: "bina-secondary",
+        storageBucket: "bina-secondary.firebasestorage.app",
+        messagingSenderId: "373949569768",
+        appId: "1:373949569768:web:9c17c253364b87209c075d",
+        measurementId: "G-0G3XEY2GXN",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Get references to Firebase services
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      // Check if user is logged in and is an admin
+      document.addEventListener("DOMContentLoaded", function () {
+        auth.onAuthStateChanged(function (user) {
+          if (user) {
+            // User is signed in, check if admin
+            db.collection("users")
+              .doc(user.uid)
+              .get()
+              .then((doc) => {
+                if (doc.exists && doc.data().role === "admin") {
+                  // User is an admin
+                  document.getElementById("adminName").textContent =
+                    doc.data().username || "Admin";
+
+                  // Load access codes
+                  loadAccessCodes();
+                } else {
+                  // Not an admin, redirect to login
+                  window.location.href = "../admin-login.html";
+                }
+              })
+              .catch((error) => {
+                console.error("Error checking admin status:", error);
+                window.location.href = "../admin-login.html";
+              });
+          } else {
+            // No user is signed in, redirect to login
+            window.location.href = "../admin-login.html";
+          }
+        });
+      });
+
+      // Logout functionality
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          auth
+            .signOut()
+            .then(() => {
+              // Clear local storage
+              localStorage.removeItem("userName");
+              localStorage.removeItem("userRole");
+              // Redirect to login page
+              window.location.href = "../admin-login.html";
+            })
+            .catch((error) => {
+              console.error("Error signing out:", error);
+            });
+        });
+
+      // Toggle sidebar on mobile
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", function () {
+          document.querySelector(".sidebar").classList.toggle("active");
+        });
+
+      // Load access codes
+      function loadAccessCodes() {
+        const codesListElement = document.getElementById("codesList");
+
+        db.collection("access_codes")
+          .orderBy("createdAt", "desc")
+          .get()
+          .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+              codesListElement.innerHTML = `
+                <tr>
+                  <td colspan="6" class="no-data">No access codes found</td>
+                </tr>
+              `;
+              return;
+            }
+
+            // Clear loading message
+            codesListElement.innerHTML = "";
+
+            // Add codes to table
+            querySnapshot.forEach((doc) => {
+              const codeData = doc.data();
+              const status = codeData.used ? "Used" : "Available";
+              const statusClass = codeData.used
+                ? "status-inactive"
+                : "status-active";
+
+              // Format dates
+              const createdDate = codeData.createdAt
+                ? new Date(codeData.createdAt.toDate()).toLocaleString()
+                : "N/A";
+              const usedDate = codeData.usedAt
+                ? new Date(codeData.usedAt.toDate()).toLocaleString()
+                : "N/A";
+
+              codesListElement.innerHTML += `
+                <tr data-id="${doc.id}">
+                  <td><strong>${codeData.code}</strong></td>
+                  <td>${createdDate}</td>
+                  <td><span class="status-badge ${statusClass}">${status}</span></td>
+                  <td>${codeData.usedBy || "N/A"}</td>
+                  <td>${usedDate}</td>
+                  <td class="actions">
+                    <button class="action-btn delete-btn" data-id="${doc.id}" ${
+                codeData.used ? "disabled" : ""
+              }>
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+              `;
+            });
+
+            // Add event listeners to delete buttons
+            addActionButtonListeners();
+          })
+          .catch((error) => {
+            console.error("Error getting access codes:", error);
+            codesListElement.innerHTML = `
+              <tr>
+                <td colspan="6" class="error-data">Error loading access codes: ${error.message}</td>
+              </tr>
+            `;
+          });
+      }
+
+      // Add event listeners to action buttons
+      function addActionButtonListeners() {
+        // Delete buttons
+        document.querySelectorAll(".delete-btn").forEach((button) => {
+          if (!button.disabled) {
+            button.addEventListener("click", function () {
+              const codeId = this.getAttribute("data-id");
+              if (
+                confirm("Are you sure you want to delete this access code?")
+              ) {
+                deleteAccessCode(codeId);
+              }
+            });
+          }
+        });
+      }
+
+      // Delete access code
+      function deleteAccessCode(codeId) {
+        db.collection("access_codes")
+          .doc(codeId)
+          .delete()
+          .then(() => {
+            alert("Access code deleted successfully!");
+            loadAccessCodes(); // Reload codes list
+          })
+          .catch((error) => {
+            console.error("Error deleting access code:", error);
+            alert("Error deleting access code: " + error.message);
+          });
+      }
+
+      // Generate Code Modal
+      const generateCodeModal = document.getElementById("generateCodeModal");
+      const generateCodeBtn = document.getElementById("generateCodeBtn");
+      const closeGenerateCodeModal = document.getElementById(
+        "closeGenerateCodeModal"
+      );
+      const cancelGenerateCode = document.getElementById("cancelGenerateCode");
+      const confirmGenerateCode = document.getElementById(
+        "confirmGenerateCode"
+      );
+
+      generateCodeBtn.addEventListener("click", function () {
+        generateCodeModal.style.display = "block";
+      });
+
+      closeGenerateCodeModal.addEventListener("click", function () {
+        generateCodeModal.style.display = "none";
+      });
+
+      cancelGenerateCode.addEventListener("click", function () {
+        generateCodeModal.style.display = "none";
+      });
+
+      // Generate access code
+      confirmGenerateCode.addEventListener("click", function () {
+        const length = parseInt(document.getElementById("codeLength").value);
+        const type = document.getElementById("codeType").value;
+
+        // Generate code based on selected options
+        const code = generateRandomCode(length, type);
+
+        // Add to Firestore
+        db.collection("access_codes")
+          .add({
+            code: code,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            used: false,
+          })
+          .then(() => {
+            alert(`Access code generated successfully: ${code}`);
+            generateCodeModal.style.display = "none";
+            loadAccessCodes(); // Reload codes list
+          })
+          .catch((error) => {
+            console.error("Error generating access code:", error);
+            alert("Error generating access code: " + error.message);
+          });
+      });
+
+      // Generate random code
+      function generateRandomCode(length, type) {
+        let characters = "";
+
+        switch (type) {
+          case "numeric":
+            characters = "0123456789";
+            break;
+          case "alphabetic":
+            characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            break;
+          case "alphanumeric":
+          default:
+            characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            break;
+        }
+
+        let result = "";
+        const charactersLength = characters.length;
+
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+
+        return result;
+      }
+
+      // Search functionality
+      document
+        .getElementById("searchCodes")
+        .addEventListener("keyup", function () {
+          const searchValue = this.value.toLowerCase();
+          const rows = document.querySelectorAll("#codesList tr");
+
+          rows.forEach((row) => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchValue)) {
+              row.style.display = "";
+            } else {
+              row.style.display = "none";
+            }
+          });
+        });
+    </script>
+  </body>
+</html>
