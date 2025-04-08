@@ -20,7 +20,7 @@
   position: relative;
   display: inline-block;
   cursor: pointer;
-  bottom: 3rem;
+  bottom: 5rem;
 }
 
 .bina-secondary-assistant .bina-character {
@@ -45,9 +45,9 @@
   position: absolute;
   background: #ffffff;
   border-radius: 20px;
-  padding: 15px;
-  min-width: 190px;
-  max-width: 230px;
+  padding: 10px;
+  min-width: 20px;
+  max-width: 520px;
   height: fit-content;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1), 0 3px 5px rgba(0, 0, 0, 0.05),
     inset 0 -3px 0 rgba(0, 0, 0, 0.05);
@@ -55,8 +55,8 @@
   color: #333;
   font-size: 14px;
   line-height: 1.5;
-  bottom: 1rem;
-  left: 6rem;
+  bottom: 27rem;
+  left: 7rem;
   text-align: left;
   transition: opacity 0.3s ease;
   z-index: 1;
@@ -64,11 +64,11 @@
 }
 
 /* Speech bubble tail */
-.speech-bubble:before {
+/* .speech-bubble:before {
   content: "";
   position: absolute;
   left: -15px;
-  bottom: 25px;
+  bottom: 23px;
   width: 0;
   height: 0;
   border-style: solid;
@@ -81,13 +81,13 @@
   content: "";
   position: absolute;
   left: -12px;
-  bottom: 25px;
+  bottom: 23px;
   width: 0;
   height: 0;
   border-style: solid;
   border-width: 15px 15px 15px 0;
   border-color: transparent #ffffff transparent transparent;
-}
+} */
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -109,19 +109,17 @@
 
 @media (max-width: 480px) {
   .bina-secondary-assistant .bina-character {
-    width: 5rem;
-    height: auto;
+    width: 70px;
   }
-
   .bina-secondary-assistant .character-wrapper {
     position: relative;
     display: inline-block;
     cursor: pointer;
-    bottom: 0rem;
-    left: -2.5rem;
+    bottom: -5rem;
+    left: -0.5rem;
   }
   .speech-bubble-container {
-    left: 80px;
+    left: 0px;
     bottom: 40px;
   }
 
@@ -130,8 +128,8 @@
     max-width: 180px;
     font-size: 12px;
     padding: 10px;
-    left: 4rem;
-    bottom: 0rem;
+    left: 5rem;
+    bottom: 21rem;
   }
 
   .speech-bubble:before {

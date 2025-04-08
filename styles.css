@@ -1,6 +1,7 @@
 /* BINA Secondary Design System */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Salsa&display=swap");
 
 /* Root Variables - Using BINA Secondary brand colors */
 :root {
@@ -47,7 +48,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", "Poppins", sans-serif;
+  font-family: "Salsa", "Poppins", sans-serif;
 }
 
 /* Background Animation */
@@ -613,7 +614,7 @@ body {
 
 .speech-bubble.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(2rem);
 }
 
 /* No data message styling */
@@ -764,5 +765,29 @@ a:hover {
   .premium-navigation {
     flex-direction: column;
     gap: 10px;
+  }
+  .speech-bubble.show {
+    opacity: 1;
+    transform: translate(2rem, -3rem);
+  }
+}
+.question-container .character-wrapper {
+  padding-bottom: -3rem;
+}
+.character-wrapper img,
+.character-wrapper img:active {
+  padding: 0;
+  width: 8rem;
+  transition: none;
+}
+@media screen and (max-width: 767px) {
+  .question-container .character-wrapper {
+    padding: -3rem;
+  }
+  .character-wrapper img,
+  .character-wrapper img:active {
+    padding: 0;
+    width: 8rem;
+    transition: none;
   }
 }

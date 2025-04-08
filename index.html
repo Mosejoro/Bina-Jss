@@ -13,6 +13,7 @@
       content="BINA Secondary - Advanced Online Preparation System for Junior WAEC Students"
     />
     <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="icon" href="logo.png" />
     <meta name="theme-color" content="#27ae60" />
     <link rel="stylesheet" href="styles.css" />
     <link
@@ -22,7 +23,7 @@
     <link rel="stylesheet" href="assistant.css" />
   </head>
   <body>
-    <div class="premium-badge">BINA Secondary</div>
+    <div class="premium-badge">Junior Secondary School</div>
 
     <!-- User Profile and Logout -->
     <div class="user-profile">
@@ -31,12 +32,6 @@
       <button class="logout-btn" id="logout-btn" title="Logout">
         <i class="fas fa-sign-out-alt"></i>
       </button>
-    </div>
-
-    <!-- Assistant Toggle Button -->
-    <div class="assistant-toggle" id="assistant-toggle">
-      <i class="fas fa-robot"></i>
-      <i class="fas fa-times"></i>
     </div>
 
     <!-- BINA Secondary Assistant (initially hidden) -->
@@ -78,10 +73,14 @@
           <select id="subject" class="form-control">
             <option value="Mathematics">Mathematics</option>
             <option value="English">English Language</option>
+            <option value="French">French</option>
             <option value="Science">Basic Science</option>
-            <option value="Social_Studies">Social Studies</option>
+            <option value="Prevocational">Prevocational</option>
             <option value="Business_Studies">Business Studies</option>
+            <option value="National_Value">National Value</option>
             <option value="CCA">Cultural & Creative Arts</option>
+            <option value="CRS">Crs</option>
+            <option value="History">History</option>
           </select>
         </div>
 
@@ -100,8 +99,8 @@
         <div class="features-grid">
           <div class="feature-item">
             <i class="fa-solid fa-clipboard-question"></i>
-            <h4>Junior WAEC Format</h4>
-            <p>Questions follow the exact Junior WAEC examination format</p>
+            <h4>Junior WAEC Curriculum</h4>
+            <p>Questions follow the exact Junior WAEC examination syllabus</p>
           </div>
 
           <div class="feature-item">
@@ -161,7 +160,7 @@
 
         // Display welcome message with full name
         const welcomeMessage = document.getElementById("welcome-message");
-        welcomeMessage.innerHTML = `<h2>Welcome to BINA Secondary, ${userFullName}!</h2>`;
+        welcomeMessage.innerHTML = `<h2>Welcome to BINA, ${userFullName}!</h2>`;
 
         // Initialize Premium messages
         initPremiumMessages();
@@ -200,20 +199,32 @@
         // Personalized messages for Premium users
         premiumMessages = [
           `Welcome back, ${userFullName}! Ready to ace your Junior WAEC exams?`,
-          `${userFullName}, I'm Tutor, your personal study assistant!`,
-          `${userFullName}, use the detailed explanations to master difficult concepts.`,
-          `${userFullName}, did you know you can track your progress in the Analytics section?`,
-          `Thanks for choosing BINA Secondary, ${userFullName}! We're here to help you succeed.`,
-          `${userFullName}, you're making great progress in your Junior WAEC preparation!`,
+          `${userFullName}, I'm Havana, your personal study assistant!`,
+          `${userFullName}, use the detailed explanations to master difficult questions.`,
+          `Thanks for choosing BINA , ${userFullName}! We're here to help you succeed.`,
+          `${userFullName}, you're going to make great progress in your Junior WAEC preparation!`,
           `Need help with a subject? Try focusing on the explanations after each question.`,
           `${userFullName}, your Premium account gives you access to past Junior WAEC questions.`,
           `We appreciate your dedication, ${userFullName}! Consistent practice leads to success.`,
-          `${userFullName}, remember to check your exam history to track your improvement.`,
-          `Premium users like you, ${userFullName}, get 45 minutes for each practice exam.`,
-          `${userFullName}, try our detailed analytics to identify your strengths and weaknesses.`,
           `Thanks for choosing BINA Secondary, ${userFullName}! We're constantly adding new features.`,
-          `${userFullName}, you're now getting the full Junior WAEC preparation experience!`,
+          `${userFullName}, you're now getting the full Junior WAEC preparation experience in CBT Format😊😊!`,
           `We're glad you're here, ${userFullName}! Let us know if you have any feature suggestions.`,
+          `${userFullName}, ready to ace your Junior WAEC exams? I'm cheering you on! 🎯`,
+          `Practice makes progress, ${userFullName}. Keep reviewing those tricky subjects!`,
+          `Stay diligent, ${userFullName}. Even 30 minutes of focused practice today can make a big difference.`,
+          `${userFullName}, thank you for choosing BINA Secondary! More features and questions are coming. 😊`,
+          `I'm Havana, ${userFullName}, and I believe in you! Let's make this prep season your best one yet. 💯`,
+          `Welcome back, ${userFullName}! I'm Havana — let's make this study session count. 💪`,
+          `${userFullName}, your journey to success starts with daily effort. Stay consistent and focused!`,
+          `Hi ${userFullName}, remember: every minute you study now adds up to big wins later. Use your time wisely!`,
+          `${userFullName}, identify the subjects you're struggling with and give them extra attention — you’ve got this!`,
+          `Thanks for choosing BINA, ${userFullName}! We're honored to be part of your academic journey. 🌱`,
+          `${userFullName}, the more you practise, the better you get. Let's keep pushing forward together! 📚`,
+          `BINA is here for you, ${userFullName}. Stay focused, stay diligent, and watch your confidence grow.`,
+          `${userFullName}, make every study session purposeful — avoid distractions and focus on your goals.`,
+          `You're doing great, ${userFullName}! Don't shy away from tough questions — they make you stronger.🔥`,
+          `${userFullName}, try revisiting your weaker subjects today. Small steps lead to big improvement.`,
+          `Thank you for being a part of the BINA family, ${userFullName}. You're not alone on this journey! 💙`,
         ];
 
         // Display first message
@@ -222,10 +233,18 @@
         );
         messageElement.textContent = premiumMessages[0];
 
-        // Set up toggle button
+        // Make assistant visible by default
         document
-          .getElementById("assistant-toggle")
-          .addEventListener("click", toggleAssistant);
+          .getElementById("bina-secondary-assistant")
+          .classList.add("visible");
+
+        // Set assistantVisible to true since it's visible by default
+        assistantVisible = true;
+
+        // Start message rotation immediately
+        messageInterval = setInterval(() => {
+          showNextMessage();
+        }, 5000); // 5 seconds
 
         // Make character clickable to show next message immediately
         document
@@ -233,34 +252,6 @@
           .addEventListener("click", () => {
             showNextMessage();
           });
-      }
-
-      function toggleAssistant() {
-        const assistant = document.getElementById("bina-secondary-assistant");
-        const toggle = document.getElementById("assistant-toggle");
-
-        if (assistantVisible) {
-          // Hide assistant
-          assistant.classList.remove("visible");
-          toggle.classList.remove("active");
-
-          // Clear the message interval
-          clearInterval(messageInterval);
-        } else {
-          // Show assistant
-          assistant.classList.add("visible");
-          toggle.classList.add("active");
-
-          // Reset message opacity
-          document.getElementById("bina-secondary-message").style.opacity = 1;
-
-          // Start message rotation - every 5 seconds
-          messageInterval = setInterval(() => {
-            showNextMessage();
-          }, 5000); // 5 seconds
-        }
-
-        assistantVisible = !assistantVisible;
       }
 
       function showNextMessage() {

@@ -47,11 +47,11 @@ async function fetchQuestions(cls, subject) {
   } catch (error) {
     console.error("Error fetching questions:", error);
     document.getElementById("questions").innerHTML = `
+    <p class="error">Please make sure you're connected to the internet.</p>
       <p class="error"> ${subject.replace(
         /_/g,
         " "
       )} - ${cls} is not yet available.</p>
-      <p class="error">Please make sure you've selected the right Class and Subject.</p>
       <button onclick="window.location.href='index.html'" class="sub-btn">Go Back</button>
     `;
   }
@@ -94,8 +94,8 @@ function displayQuestions(data, subject, cls) {
   // Add exam metadata section
   questionsDiv.innerHTML = `
        <div class="exam-header">
+      <h3 class="head">Student: ${userName}</h3>
       <h3>Subject: ${subject.replace(/_/g, " ")}</h3>
-      <h4>Class: ${cls}</h4>
       <h3 class="Warn">Answer all questions before the time runs out.</h3>
     </div>
   `;
@@ -109,15 +109,14 @@ function displayQuestions(data, subject, cls) {
       B: row[2],
       C: row[3],
       D: row[4],
-      E: row[5],
     };
-    const correctAnswer = row[6];
+    const correctAnswer = row[5];
 
     // Get the question type (column H) which contains the hint
-    const questionHint = row[7] || "";
+    const questionHint = row[6] || "";
 
     // Shuffle the options while maintaining the correct mapping
-    const optionKeys = ["A", "B", "C", "D", "E"];
+    const optionKeys = ["A", "B", "C", "D"];
     const shuffledOptionKeys = shuffleArray([...optionKeys]);
 
     // Create shuffled options object
@@ -181,7 +180,7 @@ function displayQuestions(data, subject, cls) {
               ([key, value]) => `
             <label class="option-label">
               <input type="radio" name="q${i + 1}" value="${key}" required> 
-              ${key}. ${value}
+               ${value}
             </label>
           `
             )
@@ -337,7 +336,7 @@ function setupHintCharacters() {
       if (totalHintsUsed >= MAX_TOTAL_HINTS) {
         // Update all characters to lying down
         document.querySelectorAll(".hint-character").forEach((img) => {
-          img.src = "assets/lying.png";
+          img.src = "assets/standing.png";
         });
 
         speechBubble.textContent = "I'm tired. No more hints for this exam!";
@@ -368,7 +367,7 @@ function setupHintCharacters() {
         // Hide the bubble after 3 seconds
         setTimeout(() => {
           speechBubble.classList.remove("show");
-        }, 5000);
+        }, 24000);
 
         return;
       }
@@ -397,7 +396,7 @@ function setupHintCharacters() {
       if (totalHintsUsed >= MAX_TOTAL_HINTS) {
         setTimeout(() => {
           document.querySelectorAll(".hint-character").forEach((img) => {
-            img.src = "assets/lying.png";
+            img.src = "assets/standing.png";
           });
         }, 5000);
       } else {

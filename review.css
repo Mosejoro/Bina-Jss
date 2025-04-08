@@ -1,0 +1,244 @@
+/* Review page specific styles */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.review-header h2 {
+  color: var(--secondary-color);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.review-header h3 {
+  color: var(--text-color);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.filter-options {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.filter-btn {
+  background: #f5f7fa;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filter-btn:hover {
+  background: #e9ecef;
+  border-color: #d1d1d1;
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.question-review {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: var(--transition);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.question-review:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.question-review.correct {
+  border-left: 5px solid var(--success-green);
+}
+
+.question-review.incorrect {
+  border-left: 5px solid var(--error-red);
+}
+
+.question-text {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.selected-option {
+  border: 2px solid var(--primary-color);
+  background: rgba(39, 174, 96, 0.05);
+}
+
+.correct-option {
+  border: 2px solid var(--success-green);
+  background: rgba(39, 174, 96, 0.05);
+}
+
+.option-item {
+  padding: 12px 15px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  transition: var(--transition);
+}
+
+.option-item:hover {
+  background: #f5f7fa;
+}
+
+.selected-marker {
+  font-weight: 500;
+  color: var(--primary-color);
+  margin-left: 5px;
+}
+
+.correct-marker {
+  font-weight: 500;
+  color: var(--success-green);
+  margin-left: 5px;
+}
+
+.answer-status {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.correct-answer {
+  color: var(--success-green);
+  font-weight: 600;
+}
+
+.incorrect-answer {
+  color: var(--error-red);
+  font-weight: 600;
+}
+
+.explanation {
+  background: rgba(39, 174, 96, 0.05);
+  border-left: 4px solid var(--primary-color);
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.explanation-title {
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.explanation p {
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.review-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.review-actions .submit-btn {
+  max-width: 250px;
+}
+
+/* Animation for question review items */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.question-review {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-options {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 8px 0;
+  }
+}
+
+/* Empty state styling */
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #f9f9f9;
+  border-radius: var(--border-radius);
+  margin: 2rem 0;
+}
+
+.empty-state p {
+  color: var(--muted-color);
+  margin-bottom: 1rem;
+}
+
+/* Print styles for review page */
+@media print {
+  body {
+    background: white;
+    padding: 0;
+    margin: 0;
+  }
+
+  .container {
+    box-shadow: none;
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+  }
+
+  .filter-options,
+  .review-actions,
+  .premium-badge,
+  .bg-circle {
+    display: none;
+  }
+
+  .question-review {
+    page-break-inside: avoid;
+    box-shadow: none;
+    transform: none !important;
+    border: 1px solid #ddd;
+  }
+
+  .header img {
+    max-width: 100px;
+  }
+}
