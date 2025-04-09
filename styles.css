@@ -281,7 +281,10 @@ body {
   margin-bottom: 0.75rem;
   color: var(--secondary-color);
 }
-
+.feature-preview {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
 /* Buttons */
 .btn-primary,
 .submit-btn,
@@ -790,4 +793,11 @@ a:hover {
     width: 8rem;
     transition: none;
   }
+}
+.coming-soon-container {
+  text-align: center;
+  padding: 2rem;
+}
+.coming-soon-icon {
+  font-size: 5rem;
 }
